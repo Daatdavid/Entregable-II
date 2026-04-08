@@ -9,9 +9,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-// Esta clase se encarga de hablar con la base de datos
+// Esta clase se encarga de manejar la conexión con la base de datos
+// y ejecutar las consultas SQL
 public class ObjetoDAO {
 
+    // Datos de conexión a la base de datos H2
     private final String URL = "jdbc:h2:mem:testdb";
     private final String USER = "sa";
     private final String PASSWORD = "";
@@ -21,21 +23,24 @@ public class ObjetoDAO {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    // Crear tabla (por si no existe)
+    // Crear tabla si no existe
     public void crearTabla() {
         String sql = "CREATE TABLE IF NOT EXISTS objetos (" +
-                     "id INT PRIMARY KEY, " +
-                     "nombre VARCHAR(100), " +
-                     "descripcion VARCHAR(255))";
+                "id INT PRIMARY KEY, " +
+                "nombre VARCHAR(100), " +
+                "descripcion VARCHAR(255))";
 
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
+
             stmt.execute(sql);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-// INSERT (POST)
+
+    // INSERT -> guardar objeto (POST)
     public void guardar(Objeto obj) {
         String sql = "INSERT INTO objetos (id, nombre, descripcion) VALUES (?, ?, ?)";
 
@@ -45,6 +50,7 @@ public class ObjetoDAO {
             stmt.setInt(1, obj.getId());
             stmt.setString(2, obj.getNombre());
             stmt.setString(3, obj.getDescripcion());
+
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -52,7 +58,7 @@ public class ObjetoDAO {
         }
     }
 
-    // SELECT (GET)
+    // SELECT -> listar objetos (GET)
     public List<Objeto> listar() {
         List<Objeto> lista = new ArrayList<>();
         String sql = "SELECT * FROM objetos";
