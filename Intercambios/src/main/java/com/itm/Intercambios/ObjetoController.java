@@ -3,6 +3,7 @@ package com.itm.Intercambios;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,5 +44,19 @@ public class ObjetoController {
         }
 
         return null; // si no se encuentra el objeto
+    }
+
+    // DELETE → eliminar un objeto por id
+    @DeleteMapping("/objetos/{id}")
+    public String eliminarObjeto(@PathVariable int id) {
+
+        for (Objeto obj : lista) {
+            if (obj.getId() == id) {
+                lista.remove(obj);
+                return "Objeto eliminado correctamente";
+            }
+        }
+
+        return "Objeto no encontrado";
     }
 }
