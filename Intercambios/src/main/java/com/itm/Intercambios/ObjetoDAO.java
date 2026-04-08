@@ -26,9 +26,9 @@ public class ObjetoDAO {
     // Crear tabla si no existe
     public void crearTabla() {
         String sql = "CREATE TABLE IF NOT EXISTS objetos (" +
-                "id INT PRIMARY KEY, " +
-                "nombre VARCHAR(100), " +
-                "descripcion VARCHAR(255))";
+                     "id INT PRIMARY KEY, " +
+                     "nombre VARCHAR(100), " +
+                     "descripcion VARCHAR(255))";
 
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
@@ -40,7 +40,7 @@ public class ObjetoDAO {
         }
     }
 
-    // INSERT -> guardar objeto (POST)
+    // INSERT → guardar objeto (POST)
     public void guardar(Objeto obj) {
         String sql = "INSERT INTO objetos (id, nombre, descripcion) VALUES (?, ?, ?)";
 
@@ -58,7 +58,7 @@ public class ObjetoDAO {
         }
     }
 
-    // SELECT -> listar objetos (GET)
+    // SELECT → listar objetos (GET)
     public List<Objeto> listar() {
         List<Objeto> lista = new ArrayList<>();
         String sql = "SELECT * FROM objetos";
@@ -81,5 +81,38 @@ public class ObjetoDAO {
         }
 
         return lista;
+    }
+
+    // UPDATE → actualizar objeto (PUT)
+    public void actualizar(Objeto obj) {
+        String sql = "UPDATE objetos SET nombre = ?, descripcion = ? WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, obj.getNombre());
+            stmt.setString(2, obj.getDescripcion());
+            stmt.setInt(3, obj.getId());
+
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // DELETE → eliminar objeto
+    public void eliminar(int id) {
+        String sql = "DELETE FROM objetos WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
