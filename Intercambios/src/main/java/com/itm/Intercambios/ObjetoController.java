@@ -1,6 +1,5 @@
 package com.itm.Intercambios;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,19 +14,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ObjetoController {
 
-    // Lista que guarda los objetos (simulación de base de datos)
-    private List<Objeto> lista = new ArrayList<>();
+    private ObjetoDAO dao = new ObjetoDAO();
+
+    public ObjetoController() {
+        dao.crearTabla();
+    }
 
     // GET → ver todos los objetos
     @GetMapping("/objetos")
     public List<Objeto> listarObjetos() {
-        return lista;
+        return dao.listar();
     }
 
     // POST → agregar un nuevo objeto
     @PostMapping("/objetos")
     public Objeto agregarObjeto(@RequestBody Objeto objeto) {
-        lista.add(objeto);
+        dao.guardar(objeto);
         return objeto;
     }
 
@@ -35,28 +37,17 @@ public class ObjetoController {
     @PutMapping("/objetos/{id}")
     public Objeto actualizarObjeto(@PathVariable int id, @RequestBody Objeto objetoActualizado) {
 
-        for (Objeto obj : lista) {
-            if (obj.getId() == id) {
-                obj.setNombre(objetoActualizado.getNombre());
-                obj.setDescripcion(objetoActualizado.getDescripcion());
-                return obj;
-            }
-        }
-
-        return null; // si no se encuentra el objeto
+        objetoActualizado.setId(id);
+        dao.actualizar(objetoActualizado);
+        return objetoActualizado;
     }
 
     // DELETE → eliminar un objeto por id
     @DeleteMapping("/objetos/{id}")
     public String eliminarObjeto(@PathVariable int id) {
 
-        for (Objeto obj : lista) {
-            if (obj.getId() == id) {
-                lista.remove(obj);
-                return "Objeto eliminado correctamente";
-            }
-        }
-
-        return "Objeto no encontrado";
+        dao.eliminar(id);
+        return "Objeto eliminado correctamente";
     }
 }
+
