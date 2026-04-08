@@ -1,6 +1,11 @@
 package com.itm.Intercambios;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,3 +35,45 @@ public class ObjetoDAO {
             e.printStackTrace();
         }
     }
+// INSERT (POST)
+    public void guardar(Objeto obj) {
+        String sql = "INSERT INTO objetos (id, nombre, descripcion) VALUES (?, ?, ?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, obj.getId());
+            stmt.setString(2, obj.getNombre());
+            stmt.setString(3, obj.getDescripcion());
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // SELECT (GET)
+    public List<Objeto> listar() {
+        List<Objeto> lista = new ArrayList<>();
+        String sql = "SELECT * FROM objetos";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Objeto obj = new Objeto(
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getString("descripcion")
+                );
+                lista.add(obj);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
+}
